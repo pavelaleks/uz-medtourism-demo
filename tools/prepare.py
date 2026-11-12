@@ -22,10 +22,24 @@ REGION_RU = {"UZ-TK": "г. Ташкент", "UZ-TO": "Ташкентская о�
              "UZ-FA": "Ферганская обл.", "UZ-NG": "Наманганская обл.", "UZ-QA": "Кашкадарьинская обл.", "UZ-SU": "Сурхандарьинская обл.", "UZ-JI": "Джизакская обл.",
              "UZ-SI": "Сырдарьинская обл.", "UZ-NW": "Навоийская обл.", "UZ-XO": "Хорезмская обл.", "UZ-QR": "Каракалпакстан"}
 
+# Points that lie outside Uzbekistan (checked against the geoBoundaries ADM0 border and OSM reverse geocoding):
+# Kyrgyzstan (Kara-Suu, Aravan, Kadamjay, Batken, Chatkal, Ala-Buka), Kazakhstan (Saryagash), Turkmenistan (Gubadag).
+FOREIGN = {"UZM-E35A26A9D9", "UZM-F61260CE6B", "UZM-AEC8CD1A01", "UZM-FC488478F3", "UZM-5EAB9394D2", "UZM-46D3D7E944", "UZM-5441CE9333",
+           "UZM-6B631E2647", "UZM-76190D0E34", "UZM-A8D1392CCD", "UZM-925FF39A49", "UZM-5B37D5F713", "UZM-9E2B56A7A7", "UZM-E1B3482D55",
+           "UZM-12039B0633", "UZM-F7FD6322B4", "UZM-452BAB0FF7", "UZM-7F2BB18370", "UZM-C26EAE016D", "UZM-7C4D891FE0", "UZM-636E1F0A74"}
+# Not places where patients are treated: pharmacies, opticians, morgue, forensic examination, veterinary clinic, folk healers.
+NOT_CARE = {"UZM-2F82CE5CEC", "UZM-B66F491AB3", "UZM-22EA2E34F6", "UZM-26D5A0483D", "UZM-31CB7DC074", "UZM-07D1A46E23", "UZM-F81D8BE7DD",
+            "UZM-47AAD2372D", "UZM-E8E7FAAA1C", "UZM-8B1FEE58FC", "UZM-5487ACB232", "UZM-C431E6E4E6", "UZM-C6FE0B7AB8", "UZM-63B1001616"}
+# The same facility mapped twice within ~100 m; the copy with less information is dropped.
+DUPLICATE = {"UZM-687A9EDB2D", "UZM-0E452C77E2", "UZM-95A96DE67C", "UZM-48D694B07E"}
+SKIP = FOREIGN | NOT_CARE | DUPLICATE
+
 g = json.load(open(FAC, encoding="utf-8"))
 rows = []
 for f in g["features"]:
     p = f["properties"]
+    if p["uid"] in SKIP:
+        continue
     lon, lat = f["geometry"]["coordinates"][:2]
     name = p.get("name_ru") or p.get("name") or p.get("name_latin") or ""
     if p.get("personal_name_flag"):
