@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Медицинские учреждения Узбекистана — база данных для медицинского туризма (демо)</title>
+<meta name="description" content="Демонстрационная база медицинских учреждений Узбекистана: карта, фильтры, сценарии для медицинского туризма и связи с другими данными.">
+<meta name="theme-color" content="#faf7f2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e7c6b'/%3E%3Cpath d='M13 7h6v6h6v6h-6v6h-6v-6H7v-6h6z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a href="#" class="brand" id="toTop"><span class="mark">+</span>Медучреждения Узбекистана <span class="badge">демо</span></a>
+    <nav class="toc">
+      <a href="#map-sec">Карта</a><a href="#regions">Регионы</a><a href="#links">Связки с данными</a><a href="#index">Индекс</a><a href="#next">Развитие</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <p class="kicker">База данных для медицинского туризма · демонстрационная версия</p>
+    <h1>Медицинские учреждения Узбекистана</h1>
+    <p class="lead">Все больницы, клиники, стоматологии, лаборатории и санатории страны на одной карте — с направлениями, контактами, языками сайта и признаками работы с иностранными пациентами. Ниже — что можно найти уже сейчас, как эта база соединяется с другими данными и что можно добавить.</p>
+    <div class="kpis" id="kpis"></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <h2>Насколько заполнена база</h2>
+    <p class="sub">Основа — открытые данные OpenStreetMap, проверенные и объединённые. Местоположение и тип есть у всех учреждений; контакты, сайты и признаки работы с иностранцами — у части, их дозаполняют проверкой сайтов и обзвоном.</p>
+    <div class="fill card" id="fill"></div>
+  </div>
+</section>
+
+<section class="sec alt" id="map-sec">
+  <div class="wrap">
+    <h2>Карта и поиск</h2>
+    <p class="sub">Выберите готовый сценарий или настройте фильтры. Нажмите на точку на карте или на карточку в списке.</p>
+    <div class="scen" id="scen"></div>
+    <div class="mapgrid">
+      <aside class="filters card">
+        <label>Регион<select id="fRegion"></select></label>
+        <label>Тип учреждения<select id="fType"></select></label>
+        <label>Направление<select id="fSpec"></select></label>
+        <label class="chk"><input type="checkbox" id="fReady"> Готовы к иностранцам</label>
+        <label class="chk"><input type="checkbox" id="fSite"> Есть сайт</label>
+        <label class="chk"><input type="checkbox" id="fPhone"> Есть телефон</label>
+        <label class="chk"><input type="checkbox" id="fPrices"> Цены на сайте</label>
+        <label class="search">Название или район<input type="search" id="fQ" placeholder="например, Чиланзар, Shox, кардио"></label>
+        <p class="count" id="count"></p>
+        <button class="btn ghost" id="fReset" type="button">Сбросить фильтры</button>
+      </aside>
+      <div class="mapbox card"><div id="map"></div></div>
+    </div>
+    <h3 class="list-h">Учреждения по индексу готовности</h3>
+    <div class="list" id="list"></div>
+    <div class="more"><button class="btn ghost" id="more" type="button">Показать ещё</button></div>
+  </div>
+</section>
+
+<section class="sec" id="regions">
+  <div class="wrap">
+    <h2>Регионы: где учреждений много, а где мало</h2>
+    <p class="sub">Учреждения из базы, население области (официальная статистика, 2018) и медицинские вузы. Нажмите на строку — карта покажет регион.</p>
+    <div class="card tbl"><table id="rTable"><thead><tr>
+      <th>Регион</th><th class="r">Население</th><th class="r">Учреждений</th><th class="r">На 100 тыс.</th><th class="r">Больниц</th><th class="r">Стоматологий</th><th class="r">Диагностика</th><th class="r">Готовы к иностранцам</th><th class="r">Мед. вузов</th>
+    </tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+
+<section class="sec alt" id="links">
+  <div class="wrap">
+    <h2>Что даёт связка с другими базами</h2>
+    <p class="sub">Сама по себе база отвечает на вопрос «где клиники». В связке с другими данными она отвечает на вопросы агентства: куда отправить пациента, сколько это стоит, где жить, как долететь и кто лечит.</p>
+    <div class="hub" id="hub"></div>
+    <p class="legend"><span class="dot have"></span> уже есть и связано по региону · <span class="dot can"></span> можно собрать следующим шагом</p>
+  </div>
+</section>
+
+<section class="sec" id="index">
+  <div class="wrap two">
+    <div>
+      <h2>Как считается индекс готовности</h2>
+      <p class="sub">Индекс 0–100 — это простая и прозрачная оценка того, насколько учреждению легко принять иностранного пациента по открытым данным. Это не оценка качества медицины: он помогает решить, с кем связываться в первую очередь.</p>
+    </div>
+    <div class="card"><table class="weights">
+      <tr><td>Тип учреждения: многопрофильная больница, санаторий, клиника</td><td class="r">до 20</td></tr>
+      <tr><td>Востребованные направления: кардиология, онкология, ортопедия, офтальмология, стоматология, диагностика, реабилитация и др.</td><td class="r">до 20</td></tr>
+      <tr><td>Явная работа с иностранцами или международная аккредитация</td><td class="r">до 20</td></tr>
+      <tr><td>Сайт на иностранных языках (английский, таджикский, фарси; русский)</td><td class="r">до 15</td></tr>
+      <tr><td>Есть сайт</td><td class="r">10</td></tr>
+      <tr><td>Мессенджеры или телефон для связи из-за рубежа</td><td class="r">до 10</td></tr>
+      <tr><td>Подтверждено несколькими источниками</td><td class="r">5</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section class="sec alt" id="next">
+  <div class="wrap">
+    <h2>Как база растёт</h2>
+    <ol class="steps">
+      <li><b>Открытые данные.</b> Все учреждения из OpenStreetMap, очищенные от дублей и привязанные к регионам и районам.</li>
+      <li><b>Проверка сайтов.</b> Языки, направления, цены, разделы для иностранных пациентов, аккредитации — сейчас проверено около 80 сайтов.</li>
+      <li><b>Обзвон и анкета клиник.</b> Готовность принимать иностранцев, языки персонала, пакеты «лечение + проживание», цены на основные процедуры.</li>
+      <li><b>Связка с другими базами.</b> Гостиницы и санатории рядом, рейсы, визовые правила, реестры лицензий и аккредитаций, статистика въезда пациентов.</li>
+      <li><b>Регулярное обновление.</b> Новые клиники, изменения сайтов и цен — по расписанию, с журналом изменений.</li>
+    </ol>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>Демонстрационная версия, ноябрь 2026. Источники: учреждения — © участники OpenStreetMap (ODbL), проверка сайтов и объединение источников; население — Common Operational Datasets ООН (OCHA, UNFPA) на основе данных Госкомстата, CC BY-IGO; вузы — открытый справочник вузов (CC0). Картографическая основа © OpenStreetMap. Индекс готовности — расчётная оценка, а не рейтинг качества медицинской помощи. Названия учреждений, похожие на имена частных лиц, не публикуются.</p>
+  </div>
+</footer>
+
+<button class="to-top" id="upBtn" type="button" aria-label="Наверх">↑</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
